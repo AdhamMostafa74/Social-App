@@ -9,8 +9,9 @@ export default async function getPostsApi() {
                 token: localStorage.getItem('token')
             },
             params: {
-                page: 64
+                page: 65
             }
+
         })
         return data;
     } catch (error) {
@@ -42,7 +43,6 @@ export async function getSinglePostApi(postId) {
                 token: localStorage.getItem('token')
             }
         })
-
         return data;
     } catch (error) {
         return error.response ? error.response.data.error : error.message
