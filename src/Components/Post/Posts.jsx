@@ -18,6 +18,7 @@ export default function Posts({
     getAllPosts,
     handleDeletePost,
     handleDeleteComment,
+    
 }) {
     const [visibleComment, setVisibleComment] = useState(3)
     const [isLoading, setIsLoading] = useState(false)
@@ -87,7 +88,11 @@ export default function Posts({
 
                     {/* post commands */}
 
-                    <PostCommands id={posts.id} />
+                    <PostCommands id={posts.id}
+                        handleDeleteComment={handleDeleteComment}
+                        handleDeletePost={handleDeletePost}
+                        getPosts={getAllPosts}
+                        />
 
 
 
@@ -123,7 +128,7 @@ export default function Posts({
 
                         </div>)}
 
-                    {/* show more comments */}
+                    {/* Comments Limit */}
                     {posts.comments.length >= visibleComment && !commentsLimit &&
                         <Button
                             isLoading={isLoading}

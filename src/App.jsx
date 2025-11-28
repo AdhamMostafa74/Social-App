@@ -1,6 +1,4 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import AuthLayout from './Layouts/AuthLayout'
@@ -14,25 +12,31 @@ import NotFound from './Pages/NotFound'
 import ProtectedRoute from './ProtectedRoutes/ProtectedRoute'
 import AuthProtectedRoute from './ProtectedRoutes/AuthProtectedRoute'
 
-function App() {
+const client = new QueryClient()
 
 const router = createBrowserRouter([{
-  path:'', element: <AuthLayout/>, children:[
-    {path: 'login', element:<AuthProtectedRoute> <LoginPage/></AuthProtectedRoute>},
+
+  path: '', element: <AuthLayout />, children: [
+    { path: 'login', element: <AuthProtectedRoute> <LoginPage /></AuthProtectedRoute> },
     { path: 'register', element: <AuthProtectedRoute><RegisterPage /></AuthProtectedRoute> },
-  ] 
+  ]
 },
 {
-  path:'' ,element: <MainLayout/>, children:[
-    { index: true, element: <ProtectedRoute><Home /></ProtectedRoute>},
-    {path:'post-details/:id' , element:<PostDetails/>},
-    { path: 'profile', element: <ProfilePage />},
-    { path: '*', element: <NotFound />},
+  path: '', element: <MainLayout />, children: [
+    { index: true, element: <ProtectedRoute><Home /></ProtectedRoute> },
+    { path: 'post-details/:id', element: <PostDetails /> },
+    { path: 'profile', element: <ProfilePage /> },
+    { path: '*', element: <NotFound /> },
   ]
 }])
 
+
+function App() {
+
   return (
-    <RouterProvider router={router}/>
+    <QueryClientProvider  client={client}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   )
 }
 
