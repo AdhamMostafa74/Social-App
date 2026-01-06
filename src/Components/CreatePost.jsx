@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { addPostApi } from '../Services/PostsServices'
 import { useQueryClient } from '@tanstack/react-query'
 
-export default function CreatePost({  }) {
+export default function CreatePost({ getPosts  }) {
     const [showButton, setShowButton] = useState(true)
     const [caption, setCaption] = useState('')
     const [selectedImage, setSelectedImage] = useState()
@@ -28,6 +28,7 @@ export default function CreatePost({  }) {
         setIsLoading(true)
         await addPostApi(postData)
         await queryClient.invalidateQueries({ queryKey: ['posts'] })
+        await getPosts()
         formReset()
         setIsLoading(false)
         setShowButton(true)
