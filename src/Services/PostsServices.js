@@ -9,7 +9,7 @@ export default async function getPostsApi() {
                 token: localStorage.getItem('token')
             },
             params: {
-                page: 65
+                sort: '-createdAt'
             }
 
         })

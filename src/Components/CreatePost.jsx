@@ -3,13 +3,15 @@ import { addToast, ToastProvider } from "@heroui/toast";
 
 import { useState } from 'react'
 import { addPostApi } from '../Services/PostsServices'
+import { useQueryClient } from '@tanstack/react-query'
 
-export default function CreatePost({ getPosts }) {
+export default function CreatePost({  }) {
     const [showButton, setShowButton] = useState(true)
     const [caption, setCaption] = useState('')
     const [selectedImage, setSelectedImage] = useState()
     const [imagePreview, setImagePreview] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const queryClient = useQueryClient()
 
 
     // handlePostSubmit
@@ -25,7 +27,7 @@ export default function CreatePost({ getPosts }) {
         }
         setIsLoading(true)
         await addPostApi(postData)
-        await getPosts()
+        await queryClient.invalidateQueries({ queryKey: ['posts'] })
         formReset()
         setIsLoading(false)
         setShowButton(true)

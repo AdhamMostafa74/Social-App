@@ -5,11 +5,16 @@ import Footer from '../Components/Footer'
 
 export default function MainLayout() {
   return (
-    <div>
+    <div className=''>
       <AppNavbar />
-      <div className="container">
+      <div className="flex-1 container">
         <Outlet />
-      <Footer/>
       </div>
-    </div>)
+      <div>
+        <Footer />
+
+      </div>
+      </div>
+
+  )
 }

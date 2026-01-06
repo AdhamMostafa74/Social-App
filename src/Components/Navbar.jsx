@@ -19,9 +19,12 @@ export default function AppNavbar() {
   }
   return (
     <Navbar>
-      <NavbarBrand>
+      <NavbarBrand className="gap-4">
         <Link to={'/'}  className="font-bold text-primary p-3 border rounded-2xl cursor-pointer">Home</Link>
+        <Link to={'/profile'} className="font-bold text-primary p-3 border rounded-2xl cursor-pointer">Profile</Link>
+
       </NavbarBrand>
+      
       <NavbarContent justify="end">
         {
           isLoggedIn ? <NavbarItem className="flex">

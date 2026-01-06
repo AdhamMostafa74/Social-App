@@ -18,8 +18,12 @@ export default function Posts({
     getAllPosts,
     handleDeletePost,
     handleDeleteComment,
+    isDeleting,
+    callbackFunction,
     
+
 }) {
+
     const [visibleComment, setVisibleComment] = useState(3)
     const [isLoading, setIsLoading] = useState(false)
     const [isPostDeleting, setIsPostDeleting] = useState(false)
@@ -48,10 +52,6 @@ export default function Posts({
 
     }
 
-    // handleDeletePost
-
-
-
 
     // handleMoreComments
 
@@ -71,7 +71,7 @@ export default function Posts({
                     <div className="w-full h-16 flex items-center justify-between  rounded pe-5 ">
 
                         {/* post header */}
-                        <CardHeader avatar={posts.user.photo} name={posts.user.name} subHeader={posts.createdAt} />
+                        <CardHeader avatar={posts.user.photo} name={posts.user.name} creationDate={posts.createdAt} />
 
 
                         {/* Dropdown menu */}
@@ -92,7 +92,7 @@ export default function Posts({
                         handleDeleteComment={handleDeleteComment}
                         handleDeletePost={handleDeletePost}
                         getPosts={getAllPosts}
-                        />
+                    />
 
 
 
@@ -150,7 +150,7 @@ export default function Posts({
                 isDeleting={isPostDeleting}
                 mainTitle={'Are you sure you want to delete this post?'}
                 subTitle={'THIS ACTION CANNOT BE REVERTED'}
-                callbackFunction={handleDeletePost} />
+                callbackFunction={handleDeletePost ? handleDeletePost : callbackFunction} />
 
 
 

@@ -89,7 +89,7 @@ export default function Home() {
 
         isLoading ? <LoadingScreen /> :
 
-          [...posts].reverse().slice(0, limit).map((posts) =>
+          [...posts].slice(0, limit).map((posts) =>
             <div key={posts.id}
               className='bg-transparent my-20 max-w-5xl mx-auto  '>
 

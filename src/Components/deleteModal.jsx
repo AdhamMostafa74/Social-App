@@ -10,7 +10,6 @@ export default function DeleteModal({
     id,
     setIsDeleting }) {
 
-
     return (
         <div>
             <Modal
