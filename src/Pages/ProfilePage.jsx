@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React, { use } from 'react'
 import axios from 'axios';
 import Posts from '../Components/Post/Posts';
@@ -14,26 +14,29 @@ import {
   Button,
   useDisclosure,
   Input,
+  addToast,
 } from "@heroui/react";
-import useDelete from '../Hooks/useDelete';
 import useDeletePost from '../Hooks/useDelete';
 import LoadingScreen from '../Components/LoadingScreen';
 import CreatePost from '../Components/CreatePost';
+import { useForm } from 'react-hook-form';
+import UpdatePhotoModal from '../Components/UpdatePhotoModal';
+import ChangePasswordModal from '../Components/Post/ChangePasswordModal';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { schema } from '../Schema/ChangePasswordSchema';
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isPhotoOpen, onOpen: onPhotoOpen, onClose: onPhotoClose } = useDisclosure();
+  const { isOpen: isPasswordOpen, onOpen: onPasswordOpen, onOpenChange: onPasswordOpenChange } = useDisclosure();
+
   const [backdrop, setBackdrop] = React.useState("blur");
-  const [ImagePreview, setImagePreview] = useState(null)
+  const [selectedImage, setSelectedImage] = useState()
+  const [imagePreview, setImagePreview] = useState('')
+  const queryClient = useQueryClient();
 
 
-  function test(e) {
-    console.log(e.target.value);
-  }
-  const handleOpen = (backdrop) => {
-    setBackdrop(backdrop);
-    onOpen();
-  };
+  // Queries & Hooks
 
   const { data: profileData, refetch } = useQuery({
     queryKey: ['profile'],
@@ -42,11 +45,12 @@ export default function ProfilePage() {
         headers: { token: localStorage.getItem('token') }
       });
       return response.data;
-    }
+    },
+
 
   });
 
-  const { data: postsData ,isLoading, isFetching } = useQuery({
+  const { data: postsData, isLoading, isFetching } = useQuery({
     queryKey: ['posts'],
     queryFn: async () => {
 
@@ -55,60 +59,170 @@ export default function ProfilePage() {
 
       });
       return response.data;
-    }
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
+  const { mutate, isPending } = useMutation(
+    {
+      mutationFn: async (values) => {
+        let formData = new FormData();
+        formData.append('photo', values.photo[0]);
+        const response = await axios.put('https://linked-posts.routemisr.com/users/upload-photo', formData, {
+          headers: { token: localStorage.getItem('token') }
+        });
+
+        return response.data;
+
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['profile'] });
+        setImagePreview('');
+        setSelectedImage(null);
+        onClose();
+        addToast({
+          title: 'Success',
+          type: 'success',
+          message: 'Photo uploaded successfully',
+          color: 'success',
+          timeout: 3000,
+          shouldShowTimeoutProgress: true
+        });
+      },
+      onError: (error) => {
+        addToast({
+          title: 'Error',
+          message: error.message,
+          type: 'error',
+          color: 'danger',
+          timeout: 3000,
+          shouldShowTimeoutProgress: true
+        });
+        console.error('Error uploading photo:', error.response?.data || error.message);
+      }
+    });
+
+  const { mutate: PasswordChange, isPending: isPasswordPending } = useMutation(
+    {
+      mutationFn: async (values) => {
+
+        const response = await axios.patch('https://linked-posts.routemisr.com/users/change-password', {
+          password: values.password,
+          newPassword: values.newPassword
+        }, {
+          headers: { token: localStorage.getItem('token') }
+        });
+      },
+      onSuccess: () => {
+        onPasswordOpenChange();
+        queryClient.invalidateQueries({ queryKey: ['profile'] });
+        addToast({
+          title: 'Success',
+          type: 'success',
+          message: 'Password changed successfully',
+          color: 'success',
+          timeout: 3000,
+          shouldShowTimeoutProgress: true
+        });
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      },
+      onError: (error) => {
+        addToast({
+          title: error.response?.data?.error || 'Error',
+          message: error.message,
+          type: 'error',
+          color: 'danger',
+          timeout: 3000,
+          shouldShowTimeoutProgress: true
+        });
+      }
+    });
+  const { handleSubmit, register, formState: { errors } } = useForm({
+    defaultValues: {
+      'password': '',
+      'newPassword': ''
+    },
+    resolver: zodResolver(schema),
+
+  });
+
+
+
   const { handleDeletePost } = useDeletePost(refetch);
-  console.log(postsData)
+
+
+
+
+  // Functions
+
+
+  const handleOpen = (backdrop) => {
+    setBackdrop(backdrop);
+    onPhotoOpen();
+  };
+
+  function handleImage(e) {
+
+    if (e.target.files[0]) {
+      setSelectedImage(e.target.files[0])
+      setImagePreview(URL.createObjectURL(e.target.files[0]))
+    }
+  }
+
+  function handleImagePreviewRemoval() {
+    setImagePreview('')
+    setSelectedImage(null)
+    document.querySelector('#input').value = ''
+  }
+
 
   return (
 
     <div>
       {/* HERO SECTION */}
 
-      <div className="flex justify-center border-b-2 border-gray-300">
-        <div className=" h-40 w-6xl flex  p-5 justify-center items-center ">
-          <div className='relative'>
-            <img src={profileData?.user.photo} alt=""
-              className="w-24 h-24 rounded-full object-cover border-4 border-white  " />
-            <button onClick={onOpen}
-              className='absolute bottom-0 right-0 cursor-pointer bg-gray-200 p-2 rounded-full text-gray-600
+      <div className="flex justify-center border-b-2 border-gray-300 " >
+        <div className=" h-40 w-6xl flex  p-5 justify-center items-baseline-last gap-6  ">
+          <div className='flex'>
+            <div className='relative '>
+              <img src={profileData?.user.photo} alt=""
+                className="w-24 h-24 rounded-full object-cover border-4 border-white  " />
+              <button onClick={onPhotoOpen}
+                className='absolute bottom-0 right-0 cursor-pointer bg-gray-200 p-2 rounded-full text-gray-600
              hover:text-gray-800 hover:bg-gray-300 hover:shadow-lg transition-all duration-300 '>
-              <i className='fa fa-edit'></i>
-            </button>
+                <i className='fa fa-edit'></i>
+              </button>
+            </div>
+            <div className="flex flex-col justify-end ">
+              <h2 className="ml-4 text-5xl">{profileData?.user.name}</h2>
+              <h4 className="ml-4 text-2xl">{profileData?.user.email}</h4>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <h2 className="ml-4 text-5xl">{profileData?.user.name}</h2>
-            <h4 className="ml-4 text-2xl">{profileData?.user.email}</h4>
-          </div>
+          <button
+            onClick={onPasswordOpen}
+            className=' cursor-pointer bg-gray-200 p-2 rounded-xl text-gray-900 mb-3
+             hover:text-gray-800 hover:bg-gray-300 hover:shadow-lg transition-all duration-300 '>
+            Change Password
+          </button>
+
         </div>
       </div>
-    {/* CreatePost section */}
+      {/* CreatePost section */}
       <CreatePost getPosts={refetch} />
 
       {/* POSTS SECTION */}
-      {/* <div className=" flex flex-col justify-center items-center mt-10">
-        <h2 className="text-3xl mb-5 italic">Recent Posts</h2>
-        <div className="w-2/3 ">
-          {postsData?.posts.reverse().map((post) => (
-            <div key={post._id}
-
-              className='bg-transparent my-12 max-w-5xl mx-auto  '>
-              {postsData?.posts?.length == 0 ? <div>You don't have any posts yet</div> : <Posts
-                getAllPosts={refetch}
-                posts={post}
-                callbackFunction={handleDeletePost}
-              />}
-            </div>)
-          )}
-        </div>
-        </div> */}
+      
 
       <div className="container mt-10 mb-20 relative">
+
         {isLoading || isFetching ? (
-          <div className="text-center py-10 text-xl absolute top-0 right-0 left-0 bottom-0 flex justify-center items-center w-full h-full">
-            <LoadingScreen></LoadingScreen>
+          <div className='flex justify-center items-start -translate-y-40'>
+            <LoadingScreen />
+
           </div>
+
         ) : postsData?.posts?.length === 0 ? (
           <div className="text-center py-10 text-xl">
             You don't have any posts yet
@@ -119,6 +233,8 @@ export default function ProfilePage() {
               key={post._id}
               className="bg-transparent my-12 max-w-5xl mx-auto"
             >
+              <h2 className="text-3xl mb-5 italic text-center">Recent Posts</h2>
+
               <Posts
                 getAllPosts={refetch}
                 posts={post}
@@ -129,49 +245,33 @@ export default function ProfilePage() {
         )}
       </div>
 
-      <div>
-        <div className="flex flex-wrap gap-3">
+     
 
-          <div className="flex flex-wrap gap-3">
+            <UpdatePhotoModal
+              isOpen={isPhotoOpen}
+              onClose={onPhotoClose}
+              backdrop={backdrop}
+              handleImage={handleImage}
+              imagePreview={imagePreview}
+              handleImagePreviewRemoval={handleImagePreviewRemoval}
+              mutate={mutate}
+              isPending={isPending}
+              register={register}
+              selectedImage={selectedImage}
+              handleSubmit={handleSubmit} />
 
+            <ChangePasswordModal
+              isPasswordOpen={isPasswordOpen}
+              onPasswordOpenChange={onPasswordOpenChange}
+              backdrop={backdrop}
+              handleSubmit={handleSubmit}
+              register={register}
+              errors={errors}
+              PasswordChange={PasswordChange}
+              isPasswordPending={isPasswordPending} />
+    
 
-            <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose} >
-              <ModalContent>
-                {(onClose) => (
-                  <>
-                    <ModalHeader className="flex flex-col gap-1">Upload Photo</ModalHeader>
-                    <ModalBody >
-                      <div >
-                        <Input
-
-                          type="file"
-                          onSubmit={(e) => test(e)}
-                          placeholder='Upload your photo'
-                          color='primary' />
-                      </div>
-                      <div className="relative my-5 rounded-2xl">
-                        <img className='bg-cover w-full rounded-3xl' src={ImagePreview} alt="Preview" />
-                        <button type='button' className='absolute top-3 right-3 bg-black text-white rounded-4xl p-1 text-xs '>
-                          <i className="fa-solid fa-x "></i>
-                        </button>
-                      </div>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="danger" variant="light" onPress={onClose}>
-                        Close
-                      </Button>
-                      <Button color="primary" onPress={deletePost}>
-                        Upload
-                      </Button>
-                    </ModalFooter>
-                  </>
-                )}
-              </ModalContent>
-            </Modal>
-          </div>
-        </div>
-
-      </div>
+      
 
     </div>
 
@@ -182,3 +282,4 @@ export default function ProfilePage() {
   )
 
 }
+

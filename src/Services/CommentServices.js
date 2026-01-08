@@ -7,6 +7,7 @@ export default async function addCommentApi(content, postId) {
         const { data } = await axios.post(baseUrl + 'comments' , {
             content: content,
             post: postId
+            
         },{
             headers:{
                 token: localStorage.getItem('token')
