@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import DeleteModal from '../deleteModal';
+import DeleteModal from '../Modals/deleteModal';
 import CardHeader from './CardHeader'
 import { Input, useDisclosure } from "@heroui/react";
 import { authContext } from '../../Context/AuthContext';
@@ -25,7 +25,7 @@ export default function Comment({
     return (
         <div className='max-w-4xl mx-auto py-2'>
             {isCommentEdited == false ?
-            
+
                 // add comment section
                 <div className=" h-16 flex items-center justify-between bg-gray-100 rounded px-5 shadow-lg">
 
@@ -34,7 +34,7 @@ export default function Comment({
                         name={comments.commentCreator.name}
                         subHeader={comments.content} />
                     {
-                        userData._id == comments.commentCreator._id
+                        userData?._id == comments.commentCreator._id
                         &&
                         <DropDown setIsCommentEdited={setIsCommentEdited}
                             onOpen={onOpen} />
@@ -59,6 +59,7 @@ export default function Comment({
 
             <DeleteModal
                 callbackFunction={handleDeleteComment}
+                getAllPosts={getAllPosts}
                 isDeleting={isDeletingComment}
                 isOpen={isOpen}
                 mainTitle={'Are you sure you want to delete this comment ?'}

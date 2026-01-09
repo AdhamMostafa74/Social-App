@@ -12,9 +12,7 @@ export default function App() {
 
     return (
         <div>
-            <Button color="secondary" onPress={onOpen}>
-                Open Modal
-            </Button>
+            
             <Modal
                 backdrop="opaque"
                 classNames={{

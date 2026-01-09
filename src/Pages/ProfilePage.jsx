@@ -4,7 +4,7 @@ import axios from 'axios';
 import Posts from '../Components/Post/Posts';
 import { useState } from 'react';
 import EditComment from '../Components/EditComment';
-import EditModal from '../Components/EditModal';
+import EditModal from '../Components/Modals/EditModal';
 import {
   Modal,
   ModalContent,
@@ -16,11 +16,11 @@ import {
   Input,
   addToast,
 } from "@heroui/react";
-import useDeletePost from '../Hooks/useDelete';
+import useDeletePost from '../Hooks/useDeletePost';
 import LoadingScreen from '../Components/LoadingScreen';
 import CreatePost from '../Components/CreatePost';
 import { useForm } from 'react-hook-form';
-import UpdatePhotoModal from '../Components/UpdatePhotoModal';
+import UpdatePhotoModal from '../Components/Modals/UpdatePhotoModal';
 import ChangePasswordModal from '../Components/Post/ChangePasswordModal';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { schema } from '../Schema/ChangePasswordSchema';
@@ -38,7 +38,7 @@ export default function ProfilePage() {
 
   // Queries & Hooks
 
-  const { data: profileData, refetch } = useQuery({
+  const { data: profileData, refetch: refetchProfile } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
       const response = await axios.get('https://linked-posts.routemisr.com/users/profile-data', {
@@ -50,7 +50,7 @@ export default function ProfilePage() {
 
   });
 
-  const { data: postsData, isLoading, isFetching } = useQuery({
+  const { data: postsData, isLoading, isFetching, refetch: refetchPosts } = useQuery({
     queryKey: ['posts'],
     queryFn: async () => {
 
@@ -69,6 +69,7 @@ export default function ProfilePage() {
       mutationFn: async (values) => {
         let formData = new FormData();
         formData.append('photo', values.photo[0]);
+        console.log(values.photo[0])
         const response = await axios.put('https://linked-posts.routemisr.com/users/upload-photo', formData, {
           headers: { token: localStorage.getItem('token') }
         });
@@ -159,7 +160,7 @@ export default function ProfilePage() {
 
 
 
-  const { handleDeletePost } = useDeletePost(refetch);
+  const { handleDeletePost } = useDeletePost(refetchPosts);
 
 
 
@@ -219,7 +220,7 @@ export default function ProfilePage() {
         </div>
       </div>
       {/* CreatePost section */}
-      <CreatePost getPosts={refetch} />
+      <CreatePost getPosts={refetchPosts} />
 
       {/* POSTS SECTION */}
 
@@ -245,9 +246,10 @@ export default function ProfilePage() {
               <h2 className="text-3xl mb-5 italic text-center">Recent Posts</h2>
 
               <Posts
-                getAllPosts={refetch}
+                getAllPosts={refetchPosts}
                 posts={post}
                 callbackFunction={handleDeletePost}
+                
               />
             </div>
           ))

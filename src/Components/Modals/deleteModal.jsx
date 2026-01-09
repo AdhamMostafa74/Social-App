@@ -1,4 +1,5 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
+import useDeleteComment from '../../Hooks/useDeleteComment';
 
 export default function DeleteModal({
     isDeleting,
@@ -10,6 +11,7 @@ export default function DeleteModal({
     id,
     setIsDeleting }) {
 
+    const { handleDeleteComment } = useDeleteComment()
     return (
         <div>
             <Modal

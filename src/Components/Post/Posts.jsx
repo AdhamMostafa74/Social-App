@@ -9,8 +9,9 @@ import addCommentApi from "../../Services/CommentServices";
 import { addToast, } from "@heroui/toast";
 
 import { authContext } from "../../Context/AuthContext";
-import DeleteModal from "../deleteModal";
+import DeleteModal from "../Modals/deleteModal";
 import DropDown from "../DropDown";
+import UpdatePostModal from "../Modals/UpdatePostModal";
 
 export default function Posts({
     posts,
@@ -20,7 +21,7 @@ export default function Posts({
     handleDeleteComment,
     isDeleting,
     callbackFunction,
-    
+
 
 }) {
 
@@ -30,6 +31,8 @@ export default function Posts({
     const [inputValue, setInputValue] = useState('')
     const { userData } = useContext(authContext)
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen: isOpenUpdatePost, onOpen: onOpenUpdatePost, onClose: onCloseUpdatePost } = useDisclosure();
+
 
 
 
@@ -75,11 +78,11 @@ export default function Posts({
 
 
                         {/* Dropdown menu */}
-                        {userData._id == posts?.user._id && <DropDown onOpen={onOpen} />}
+                        {userData?._id == posts?.user._id && <DropDown onOpen={onOpen} onOpenUpdatePost={onOpenUpdatePost} />}
 
                         {/* post body */}
                     </div>
-                    <PostBody  caption={posts.body}
+                    <PostBody caption={posts.body}
                         photo={posts.image} />
 
                     {/* post footer */}
@@ -152,7 +155,12 @@ export default function Posts({
                 subTitle={'THIS ACTION CANNOT BE REVERTED'}
                 callbackFunction={handleDeletePost ? handleDeletePost : callbackFunction} />
 
-
+            <UpdatePostModal
+                onOpen={onOpenUpdatePost}
+                isOpen={isOpenUpdatePost}
+                onClose={onCloseUpdatePost}
+                post={posts}
+                getAllPosts={getAllPosts} />
 
         </div>)
 }
