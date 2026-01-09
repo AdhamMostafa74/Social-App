@@ -79,7 +79,7 @@ export default function Posts({
 
                         {/* post body */}
                     </div>
-                    <PostBody caption={posts.body}
+                    <PostBody  caption={posts.body}
                         photo={posts.image} />
 
                     {/* post footer */}
