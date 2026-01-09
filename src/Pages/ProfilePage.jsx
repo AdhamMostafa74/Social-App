@@ -189,11 +189,11 @@ export default function ProfilePage() {
 
   return (
 
-    <div>
+    <div className="overflow-x-hidden">
       {/* HERO SECTION */}
 
-      <div className="flex justify-center border-b-2 border-gray-300 " >
-        <div className=" h-40 w-6xl flex  p-5 justify-center items-baseline-last gap-6  ">
+      <div className="flex justify-center border-b-2 border-gray-300  bg-amber-50" >
+        <div className=" w-full max-w-6xl flex flex-col sm:flex-row p-5 justify-center items-center gap-6  ">
           <div className='flex'>
             <div className='relative '>
               <img src={profileData?.user.photo} alt=""
@@ -205,8 +205,8 @@ export default function ProfilePage() {
               </button>
             </div>
             <div className="flex flex-col justify-end ">
-              <h2 className="ml-4 text-5xl">{profileData?.user.name}</h2>
-              <h4 className="ml-4 text-2xl">{profileData?.user.email}</h4>
+              <h2 className="ml-4 text-2xl sm:text-5xl">{profileData?.user.name}</h2>
+              <h4 className="ml-4 text-lg sm:text-2xl">{profileData?.user.email}</h4>
             </div>
           </div>
           <button
@@ -240,7 +240,7 @@ export default function ProfilePage() {
           [...postsData.posts].reverse().map((post) => (
             <div
               key={post._id}
-              className="bg-transparent my-12 max-w-5xl mx-auto"
+              className="bg-transparent my-12 max-w-full sm:max-w-5xl mx-auto"
             >
               <h2 className="text-3xl mb-5 italic text-center">Recent Posts</h2>
 

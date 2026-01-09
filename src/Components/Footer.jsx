@@ -9,7 +9,7 @@ export default function Footer() {
     <div className='h-1/4 bg-linear-to-b from-primary-200 to-primary-600 mt-20'>
 
       <div >
-        <div className=' container w-6xl' >
+        <div className=' container w-full max-w-6xl' >
           <ul className='flex justify-center py-12 gap-4'>
             <li><a className='border rounded-full'
               href="https://www.facebook.com/adham.mostafa.372">

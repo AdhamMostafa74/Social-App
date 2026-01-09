@@ -65,7 +65,7 @@ export default function Posts({
 
 
     return (
-        <div className='shadow-2xl max-w-4xl mx-auto my-5 p-5  rounded-3xl'>
+        <div className='shadow-xl max-w-4xl mx-auto my-5 p-5  rounded-3xl'>
             <div>
                 <div className=" w-full rounded-md  h-auto py-3 px-3 mt-5">
                     <div className="w-full h-16 flex items-center justify-between  rounded pe-5 ">
@@ -75,7 +75,7 @@ export default function Posts({
 
 
                         {/* Dropdown menu */}
-                        {userData._id == posts.user._id && <DropDown onOpen={onOpen} />}
+                        {userData._id == posts?.user._id && <DropDown onOpen={onOpen} />}
 
                         {/* post body */}
                     </div>
