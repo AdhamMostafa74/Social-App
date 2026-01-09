@@ -80,7 +80,7 @@ export default function ProfilePage() {
         queryClient.invalidateQueries({ queryKey: ['profile'] });
         setImagePreview('');
         setSelectedImage(null);
-        onClose();
+        onPhotoClose();
         addToast({
           title: 'Success',
           type: 'success',
@@ -148,6 +148,15 @@ export default function ProfilePage() {
 
   });
 
+  const {
+    handleSubmit: handlePhotoSubmit,
+    register: registerPhoto
+  } = useForm({
+    defaultValues: {
+      photo: null
+    }
+  });
+
 
 
   const { handleDeletePost } = useDeletePost(refetch);
@@ -213,7 +222,7 @@ export default function ProfilePage() {
       <CreatePost getPosts={refetch} />
 
       {/* POSTS SECTION */}
-      
+
 
       <div className="container mt-10 mb-20 relative">
 
@@ -245,33 +254,33 @@ export default function ProfilePage() {
         )}
       </div>
 
-     
 
-            <UpdatePhotoModal
-              isOpen={isPhotoOpen}
-              onClose={onPhotoClose}
-              backdrop={backdrop}
-              handleImage={handleImage}
-              imagePreview={imagePreview}
-              handleImagePreviewRemoval={handleImagePreviewRemoval}
-              mutate={mutate}
-              isPending={isPending}
-              register={register}
-              selectedImage={selectedImage}
-              handleSubmit={handleSubmit} />
 
-            <ChangePasswordModal
-              isPasswordOpen={isPasswordOpen}
-              onPasswordOpenChange={onPasswordOpenChange}
-              backdrop={backdrop}
-              handleSubmit={handleSubmit}
-              register={register}
-              errors={errors}
-              PasswordChange={PasswordChange}
-              isPasswordPending={isPasswordPending} />
-    
+      <UpdatePhotoModal
+        isOpen={isPhotoOpen}
+        onClose={onPhotoClose}
+        backdrop={backdrop}
+        handleImage={handleImage}
+        imagePreview={imagePreview}
+        handleImagePreviewRemoval={handleImagePreviewRemoval}
+        mutate={mutate}
+        isPending={isPending}
+        register={registerPhoto}
+        selectedImage={selectedImage}
+        handleSubmit={handlePhotoSubmit} />
 
-      
+      <ChangePasswordModal
+        isPasswordOpen={isPasswordOpen}
+        onPasswordOpenChange={onPasswordOpenChange}
+        backdrop={backdrop}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+        PasswordChange={PasswordChange}
+        isPasswordPending={isPasswordPending} />
+
+
+
 
     </div>
 
