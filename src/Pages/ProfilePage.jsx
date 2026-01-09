@@ -192,7 +192,7 @@ export default function ProfilePage() {
     <div className="overflow-x-hidden">
       {/* HERO SECTION */}
 
-      <div className="flex justify-center border-b-2 border-gray-300  bg-amber-50" >
+      <div className="flex justify-center border-b-2 border-gray-300 " >
         <div className=" w-full max-w-6xl flex flex-col sm:flex-row p-5 justify-center items-center gap-6  ">
           <div className='flex'>
             <div className='relative '>
