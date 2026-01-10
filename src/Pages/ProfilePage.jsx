@@ -61,7 +61,7 @@ export default function ProfilePage() {
       return response.data;
     },
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
   });
 
   const { mutate, isPending } = useMutation(

@@ -26,7 +26,7 @@ export default function Home() {
 
     },
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
   });
 
 
