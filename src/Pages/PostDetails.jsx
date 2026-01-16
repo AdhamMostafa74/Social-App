@@ -82,7 +82,7 @@ export default function PostDetails() {
   }, [])
 
   return (
-    <div className='h-screen mt-32'>
+    <div className=' mb-52'>
       {post ? <Posts
        getAllPosts={getSinglePost}
        posts={post}
