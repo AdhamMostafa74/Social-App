@@ -17,7 +17,7 @@ export default async function getPostsApi() {
         })
         return data;
     } catch (error) {
-        return error.response ? error.response.data.error : error.message
+        throw new Error(error.response ? error.response.data.error : error.message)
     }
 
 }
@@ -33,7 +33,7 @@ export async function addPostApi(postData) {
 
         return data;
     } catch (error) {
-        return error.response ? error.response.data.error : error.message
+        throw new Error(error.response ? error.response.data.error : error.message)
     }
 
 }
@@ -47,7 +47,7 @@ export async function getSinglePostApi(postId) {
         })
         return data;
     } catch (error) {
-        return error.response ? error.response.data.error : error.message
+        throw new Error(error.response ? error.response.data.error : error.message)
     }
 
 }
@@ -62,7 +62,7 @@ export async function deletePostApi(postId) {
 
         return data;
     } catch (error) {
-        return error.response ? error.response.data.error : error.message
+        throw new Error(error.response ? error.response.data.error : error.message)
     }
 
 }
@@ -79,7 +79,7 @@ export async function updatePostApi(postId, postData) {
 
         return data;
     } catch (error) {
-        return error.response ? error.response.data.error : error.message
+        throw new Error(error.response ? error.response.data.error : error.message)
     }
 
 }

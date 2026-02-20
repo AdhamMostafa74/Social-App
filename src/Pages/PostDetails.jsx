@@ -9,15 +9,25 @@ import { addToast } from '@heroui/toast'
 
 export default function PostDetails() {
   const [post, setPost] = useState()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const { id } = useParams()
   const navigate = useNavigate()
 
   async function getSinglePost() {
-    const response = await getSinglePostApi(id)
-    if (response.message == 'success') {
-      setPost(response.post)
-
+    setLoading(true)
+    setError('')
+    try {
+      const response = await getSinglePostApi(id)
+      if (response.message == 'success') {
+        setPost(response.post)
+      } else {
+        setError('Unexpected response')
+      }
+    } catch (err) {
+      setError(err.message || 'Bad Gateway - Server is down')
     }
+    setLoading(false)
   }
   // delete post function
 
@@ -36,7 +46,7 @@ export default function PostDetails() {
       })
       onClose()
       navigate('/')
-      
+
 
     } else {
       console.log(data)
@@ -75,7 +85,7 @@ export default function PostDetails() {
 
   // get single post function
 
- 
+
   useEffect(() => {
     getSinglePost()
 
@@ -83,12 +93,12 @@ export default function PostDetails() {
 
   return (
     <div className=' mb-52'>
-      {post ? <Posts
-       getAllPosts={getSinglePost}
-       posts={post}
-       handleDeleteComment={handleDeleteComment}
-       handleDeletePost={handleDeletePost}
-        /> : <LoadingScreen />}
+      {loading ? <LoadingScreen /> : error ? <div className="text-center py-10 text-xl text-red-500">Error: {error}</div> : post ? <Posts
+        getAllPosts={getSinglePost}
+        posts={post}
+        handleDeleteComment={handleDeleteComment}
+        handleDeletePost={handleDeletePost}
+      /> : null}
 
     </div>
   )

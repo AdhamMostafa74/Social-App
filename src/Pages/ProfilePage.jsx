@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import React, { use } from 'react'
+import React from 'react'
 import axios from 'axios';
 import Posts from '../Components/Post/Posts';
 import { useState } from 'react';
@@ -50,7 +50,7 @@ export default function ProfilePage() {
 
   });
 
-  const { data: postsData, isLoading, isFetching, refetch: refetchPosts } = useQuery({
+  const { data: postsData, isLoading, isFetching, isError, error, refetch: refetchPosts } = useQuery({
     queryKey: ['posts'],
     queryFn: async () => {
 
@@ -233,11 +233,13 @@ export default function ProfilePage() {
 
           </div>
 
+        ) : isError ? (
+          <div className="text-center py-10 text-xl text-red-500">Error: {error?.message || 'Bad Gateway - Server is down'}</div>
         ) : postsData?.posts?.length === 0 ? (
           <div className="text-center py-10 text-xl">
             You don't have any posts yet
           </div>
-        ) : (
+        ) : postsData && postsData.posts && Array.isArray(postsData.posts) ? (
           [...postsData.posts].reverse().map((post) => (
             <div
               key={post._id}
@@ -249,11 +251,11 @@ export default function ProfilePage() {
                 getAllPosts={refetchPosts}
                 posts={post}
                 callbackFunction={handleDeletePost}
-                
+
               />
             </div>
           ))
-        )}
+        ) : null}
       </div>
 
 

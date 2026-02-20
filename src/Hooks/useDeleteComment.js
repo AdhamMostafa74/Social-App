@@ -7,28 +7,39 @@ export default function useDeleteComment() {
 
     async function handleDeleteComment(onClose, commentId, setIsDeletingComment) {
         setIsDeletingComment(true)
-        const data = await deleteCommentApi(commentId)
-        if (data.message == 'success') {
-            setIsDeletingComment(false)
-            onClose()
-            await queryClient.invalidateQueries({ queryKey: ['posts'] })
+        try {
+            const data = await deleteCommentApi(commentId)
+            if (data.message == 'success') {
+                setIsDeletingComment(false)
+                onClose()
+                await queryClient.invalidateQueries({ queryKey: ['posts'] })
 
-            addToast({
-                title: 'Comment Deleted!',
-                color: 'success',
-                timeout: 3000,
-                shouldShowTimeoutProgress: true
-            })
-        } else {
+                addToast({
+                    title: 'Comment Deleted!',
+                    color: 'success',
+                    timeout: 3000,
+                    shouldShowTimeoutProgress: true
+                })
+            } else {
+                setIsDeletingComment(false)
+                addToast({
+                    title: data.message,
+                    color: 'danger',
+                    timeout: 3000,
+                    shouldShowTimeoutProgress: true
+                })
+                onClose()
+
+            }
+        } catch (err) {
             setIsDeletingComment(false)
             addToast({
-                title: data.message,
+                title: err.message || 'Network Error',
                 color: 'danger',
                 timeout: 3000,
                 shouldShowTimeoutProgress: true
             })
             onClose()
-
         }
     } return { handleDeleteComment }
 }

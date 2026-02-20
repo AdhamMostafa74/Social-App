@@ -41,17 +41,27 @@ export default function Posts({
 
     async function handleCommentSubmit() {
         setIsLoading(true)
-        await addCommentApi(inputValue, posts.id)
-        await getAllPosts()
-        setIsLoading(false)
-        setInputValue('')
+        try {
+            await addCommentApi(inputValue, posts.id)
+            await getAllPosts()
+            setIsLoading(false)
+            setInputValue('')
 
-        addToast({
-            title: 'Comment Added!',
-            color: 'success',
-            timeout: 3000,
-            shouldShowTimeoutProgress: true
-        })
+            addToast({
+                title: 'Comment Added!',
+                color: 'success',
+                timeout: 3000,
+                shouldShowTimeoutProgress: true
+            })
+        } catch (err) {
+            setIsLoading(false)
+            addToast({
+                title: err.message || 'Failed to add comment',
+                color: 'danger',
+                timeout: 3000,
+                shouldShowTimeoutProgress: true
+            })
+        }
 
     }
 

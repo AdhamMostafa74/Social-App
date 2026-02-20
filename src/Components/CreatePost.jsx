@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { addPostApi } from '../Services/PostsServices'
 import { useQueryClient } from '@tanstack/react-query'
 
-export default function CreatePost({ getPosts  }) {
+export default function CreatePost({ getPosts }) {
     const [showButton, setShowButton] = useState(true)
     const [caption, setCaption] = useState('')
     const [selectedImage, setSelectedImage] = useState()
@@ -26,18 +26,28 @@ export default function CreatePost({ getPosts  }) {
             postData.append('image', selectedImage)
         }
         setIsLoading(true)
-        await addPostApi(postData)
-        await queryClient.invalidateQueries({ queryKey: ['posts'] })
-        await getPosts()
-        formReset()
-        setIsLoading(false)
-        setShowButton(true)
-        addToast({
-            title: 'Post Added!',
-            color: 'success',
-            timeout: 3000,
-            shouldShowTimeoutProgress: true
-        })
+        try {
+            await addPostApi(postData)
+            await queryClient.invalidateQueries({ queryKey: ['posts'] })
+            await getPosts()
+            formReset()
+            setIsLoading(false)
+            setShowButton(true)
+            addToast({
+                title: 'Post Added!',
+                color: 'success',
+                timeout: 3000,
+                shouldShowTimeoutProgress: true
+            })
+        } catch (err) {
+            setIsLoading(false)
+            addToast({
+                title: err.message || 'Failed to add post',
+                color: 'danger',
+                timeout: 3000,
+                shouldShowTimeoutProgress: true
+            })
+        }
 
     }
 

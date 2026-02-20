@@ -4,18 +4,18 @@ const baseUrl = 'https://linked-posts.routemisr.com/'
 // addCommentApi
 export default async function addCommentApi(content, postId) {
     try {
-        const { data } = await axios.post(baseUrl + 'comments' , {
+        const { data } = await axios.post(baseUrl + 'comments', {
             content: content,
             post: postId
-            
-        },{
-            headers:{
+
+        }, {
+            headers: {
                 token: localStorage.getItem('token')
             }
         })
         return data;
     } catch (error) {
-        return error.response ? error.response.data.error : error.message
+        throw new Error(error.response ? error.response.data.error : error.message)
     }
 }
 
@@ -23,22 +23,22 @@ export default async function addCommentApi(content, postId) {
 // deleteCommentApi
 export async function deleteCommentApi(commentId) {
     try {
-        const { data } = await axios.delete(baseUrl + 'comments/' + commentId , {
-            headers:{
+        const { data } = await axios.delete(baseUrl + 'comments/' + commentId, {
+            headers: {
                 token: localStorage.getItem('token')
             }
         })
         return data;
     } catch (error) {
-        return error.response ? error.response.data.error : error.message
+        throw new Error(error.response ? error.response.data.error : error.message)
     }
 }
 
 
 // updateCommentApi
-export  async function editCommentApi(content, commentId) {
+export async function editCommentApi(content, commentId) {
     try {
-        const { data } = await axios.put(baseUrl + 'comments/' + commentId ,{
+        const { data } = await axios.put(baseUrl + 'comments/' + commentId, {
             content: content,
         }, {
             headers: {
@@ -47,6 +47,6 @@ export  async function editCommentApi(content, commentId) {
         })
         return data;
     } catch (error) {
-        return error.response ? error.response.data.error : error.message
+        throw new Error(error.response ? error.response.data.error : error.message)
     }
 }

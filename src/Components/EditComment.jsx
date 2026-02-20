@@ -14,18 +14,28 @@ export default function EditComment({
     // edit comment function
     async function handleEditComment() {
         setIsLoading(true)
-        const data = await editCommentApi(editInputValue, id)
-        await getAllPosts()
-        setIsCommentEdited(false)
-        setIsLoading(false)
-        addToast({
-            title: 'Comment Edited!',
-            color: 'success',
-            timeout: 3000,
-            shouldShowTimeoutProgress: true
-        })
+        try {
+            const data = await editCommentApi(editInputValue, id)
+            await getAllPosts()
+            setIsCommentEdited(false)
+            setIsLoading(false)
+            addToast({
+                title: 'Comment Edited!',
+                color: 'success',
+                timeout: 3000,
+                shouldShowTimeoutProgress: true
+            })
+        } catch (err) {
+            setIsLoading(false)
+            addToast({
+                title: err.message || 'Failed to edit comment',
+                color: 'danger',
+                timeout: 3000,
+                shouldShowTimeoutProgress: true
+            })
+        }
     }
-    
+
     return (<>
 
         <div className="flex flex-col  ">

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { schema } from '../Schema/registerSchema'
-import { loginApi, registerApi } from '../Services/AuthServices'
+import { registerApi } from '../Services/AuthServices'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -14,9 +14,9 @@ export default function RegisterPage() {
   const [successMessage, setSuccessMessage] = useState('')
   const navigate = useNavigate()
 
-  const { register, handleSubmit, formState: { errors } , reset} = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-    "name": "",
+      "name": "",
       "email": "",
       "password": "",
       "rePassword": "",
@@ -28,17 +28,25 @@ export default function RegisterPage() {
   })
   async function handleRegister(formData) {
     setIsLoading(true)
-    const data = await registerApi(formData)
-    setIsLoading(false)
-    if(data.error){
-      setErrorMessage(data.error)
+    setErrorMessage('')
+    setSuccessMessage('')
+    try {
+      const data = await registerApi(formData)
+      setIsLoading(false)
+      if (data.message == 'success') {
+        setErrorMessage('')
+        setSuccessMessage(data.message + ', Redirected to Login in 2 seconds')
+        setTimeout(() => {
+          navigate('/login')
+        }, 2000);
+      } else {
+        setErrorMessage('Unexpected response')
+        setSuccessMessage('')
+      }
+    } catch (err) {
+      setIsLoading(false)
+      setErrorMessage(err.message || 'Network Error - Please try again later')
       setSuccessMessage('')
-    }else{
-      setErrorMessage('')
-      setSuccessMessage(data.message + ', Redirected to Login in 2 seconds')
-      setTimeout(() => {
-        navigate('/login')
-      }, 2000);
     }
   }
   return (
@@ -64,7 +72,7 @@ export default function RegisterPage() {
           </Button>
           {errorMessage && <p className=' text-red-700 text-center mt-0 pt-0 bg-red-200 rounded w-1/2 mx-auto'>{errorMessage}</p>}
           {successMessage && <p className=' text-green-700 text-center mt-0 pt-0 bg-green-200 rounded w-1/2 mx-auto'>{successMessage}</p>}
-          
+
         </div>
       </form>
     </div>

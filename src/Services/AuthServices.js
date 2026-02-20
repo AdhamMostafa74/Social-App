@@ -1,27 +1,27 @@
 import axios from "axios";
 const baseUrl = 'https://linked-posts.routemisr.com/'
 
-export async function registerApi(formData){
+export async function registerApi(formData) {
     try {
         const { data } = await axios.post(baseUrl + 'users/signup', formData)
         return data
 
     } catch (error) {
-        return error.response.data
+        throw new Error(error.response ? error.response.data.error : error.message)
     }
 }
-export async function loginApi(formData){
+export async function loginApi(formData) {
     try {
         const { data } = await axios.post(baseUrl + 'users/signin', formData)
         return data
 
     } catch (error) {
-        return error.response ? error.response.data : error.message;
+        throw new Error(error.response ? error.response.data.error : error.message);
     }
 }
-export async function getLoggedUserDataApi(){
+export async function getLoggedUserDataApi() {
     try {
-        const { data } = await axios.get(baseUrl + 'users/profile-data', 
+        const { data } = await axios.get(baseUrl + 'users/profile-data',
             {
                 headers: {
                     token: localStorage.getItem('token')
@@ -31,7 +31,7 @@ export async function getLoggedUserDataApi(){
         return data
 
     } catch (error) {
-        return error.response ? error.response.data : error.message;
+        throw new Error(error.response ? error.response.data.error : error.message);
     }
 }
 

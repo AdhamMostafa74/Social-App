@@ -25,15 +25,21 @@ export default function LoginPage() {
   })
   async function handleLogin(formData) {
     setIsLoading(true)
-    const data = await loginApi(formData)
-    setIsLoading(false)
-    if (data.message == 'success') {
-      localStorage.setItem('token', data.token)
-      setisLoggedIn(true)
-      navigate('/')
+    setErrorMessage('')
+    try {
+      const data = await loginApi(formData)
+      setIsLoading(false)
+      if (data.message == 'success') {
+        localStorage.setItem('token', data.token)
+        setisLoggedIn(true)
+        navigate('/')
 
-    } else {
-     setErrorMessage(data.error)
+      } else {
+        setErrorMessage('Unexpected response')
+      }
+    } catch (err) {
+      setIsLoading(false)
+      setErrorMessage(err.message || 'Network Error - Please try again later')
     }
   }
   return (
